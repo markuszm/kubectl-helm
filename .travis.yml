@@ -1,0 +1,16 @@
+sudo: required
+
+env:
+    - CONTAINER_IMAGE_NAME=quay.io/cosee-gitlab/kubectl-helm
+
+services:
+    - docker
+
+script:
+    - docker build --pull -t $CONTAINER_IMAGE_NAME:latest  .
+
+after_success:
+    - if [ "$TRAVIS_BRANCH" == "master" ]; then
+      docker login -u="$QUAY_USER" -p="$QUAY_APIKEY" quay.io;
+      docker push $CONTAINER_IMAGE_NAME;
+      fi
